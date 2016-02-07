@@ -200,7 +200,7 @@ And you also need to add NOPASSWD to the sudoers file:
     %sudo  ALL=(ALL) ALL
 
     # by this line
-    %sudo ALL=(ALL) NOPASSWD:ALL  
+    %sudo ALL=(ALL) NOPASSWD:ALL
 
 When this process is not working you might encounter the following error:
 
@@ -300,6 +300,32 @@ To do that just add following configuration to your `mup.json` file.
 Now, simply do `mup setup` and then `mup deploy`. Now your app is running with a modern SSL setup.
 
 To learn more about the SSL setup refer to the [`mup-frontend-server`](https://github.com/meteorhacks/mup-frontend-server) project.
+
+### TLS certificate generation using Let's Encrypt
+
+Meteor Up integrates [Let's Encrypt](https://github.com/letsencrypt/letsencrypt)
+, which is a Certificate Authority that offers free and automated TLS
+certificates.
+
+~~~js
+{
+  ...
+
+  "ssl": {
+    "generate": true, // This enables the automatic generation of certificates
+    "tlsEmail": "example@example.com", // Email used to register the certificate
+    "tlsDomains": "example.com", // Domain to be registered (Usually same than hostname)
+    "port": 443 // 443 is the default value and it's the standard HTTPS port
+  }
+
+  ...
+}
+~~~
+
+Generate automatically TLS certificates is not compatible with setting your own
+certificate. Therefore, if the option `generate: true` is given, your custom
+certificates will be ignored.
+
 
 ### Updating Mup
 
