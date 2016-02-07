@@ -47,13 +47,26 @@ fi
   set +e
   docker pull meteorhacks/mup-frontend-server:latest
   set -e
-  docker run \
-    -d \
-    --restart=always \
-    --volume=/opt/$APPNAME/config/bundle.crt:/bundle.crt \
-    --volume=/opt/$APPNAME/config/private.key:/private.key \
-    --link=$APPNAME:backend \
-    --publish=<%= sslConfig.port %>:443 \
-    --name=$APPNAME-frontend \
-    meteorhacks/mup-frontend-server /start.sh
+  <% if(sslConfig.generate) { %>
+    docker run \
+      -d \
+      --restart=always \
+      --link=$APPNAME:backend \
+      --publish=<%= sslConfig.port %>:443 \
+      --name=$APPNAME-frontend \
+      -e TLS_GENERATE=<%= sslConfig.generate%> \
+      -e TLS_EMAIL=<%= sslConfig.tlsEmail%> \
+      -e TLS_DOMAINS=<%= sslConfig.tlsDomains%> \
+      meteorhacks/mup-frontend-server /start.sh
+  <% } else { %>
+    docker run \
+      -d \
+      --restart=always \
+      --volume=/opt/$APPNAME/config/bundle.crt:/bundle.crt \
+      --volume=/opt/$APPNAME/config/private.key:/private.key \
+      --link=$APPNAME:backend \
+      --publish=<%= sslConfig.port %>:443 \
+      --name=$APPNAME-frontend \
+      meteorhacks/mup-frontend-server /start.sh
+  <% } %>
 <% } %>
